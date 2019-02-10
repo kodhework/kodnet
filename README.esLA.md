@@ -76,7 +76,7 @@ int32Class= _screen.kodnet.getStaticWrapper("System.Int32")
 * Usted puede pasar un objeto *FoxPro* y leerlo desde un método .NET usando *dynamic*
 * Soporte multithread
 * Incluya controles visuales de .NET dentro de sus formularios *VisualFoxPro* y acceda a sus miembros como cualquier otra clase .NET
-* Soporte para añadir/eliminar manejadores de eventos .NET
+* Soporte para añadir/eliminar manejadores de eventos .NET (*delegados*)
 * Gran rendimiento en los llamados a métodos, propiedades, porque internamente no usa *Reflexión* sino usa *CallSite* (la metodología que usa internamente *dynamic* en C#) 
 
 
