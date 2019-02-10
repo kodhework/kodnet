@@ -158,7 +158,9 @@ m.netClient.add_DownloadFileCompleted(m.downloadCallback)
 m.netClient.DownloadFileAsync(uriClass.construct("http://storage-ns01.d0stream.com/.drive/Projects/ffmpeg.tar.gz"), m.file)
 
 * this executes before finish for demostrate that method is called async
-? "Before finish download"
+? "Download has started. Running in background"
+return 
+
 
 DEFINE CLASS downloadCallback  as Custom 
 	FUNCTION finished(sender, args)
