@@ -96,7 +96,7 @@ store= m.X509StoreClass.construct()
 
 * access to enum
 
-X509OpenFlagsEnum=  _screen.kodnet.getStaticWrapper(System.Security.Cryptography.X509Certificates.OpenFlags")
+X509OpenFlagsEnum=  _screen.kodnet.getStaticWrapper("System.Security.Cryptography.X509Certificates.OpenFlags")
 store.Open(X509OpenFlagsEnum.ReadOnly)
 
 * manage collections  
