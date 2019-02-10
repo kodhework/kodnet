@@ -1,37 +1,42 @@
 # kodnet
 
+
+### Go to [Spanish documentation](README.esLA.md)
+
 ## Library and helpers for access to all .NET objects/classes/controls from VisualFoxPro 9
 Yes made .NET interop easy for VisualFoxPro 9
 
-**kodnet** añade una pequeña librería que permite usar clases/objetos y controles .NET dentro de su proyecto *VisualFoxPro 9*. Usted puede llamar cualquier método, campo o propiedad de cualquier clase .NET sin necesidad de crear un componente COM. Acceda a los componentes del .NET framework, a la gran cantidad de librerías .NET gratuitas, o a sus propios componentes desde VisualFoxPro 9 sin necesidad de registrar o instalar nada .
+**kodnet** adds a small library that allows you to use classes/objects and .NET controls within your *VisualFoxPro 9* project. You can call any method, field or property of any .NET class without having to create a COM component. Access the .NET framework components, the large number of free .NET libraries, or your own components from VisualFoxPro 9 without registering or installing anything.
 
-**kodnet** permite acceder incluso a enums, structs, clases y métodos genéricos, que es algo que no puede lograr generando por usted mismo un componente .COM. 
-**kodnet** implícitamente provee conversión de tipos siempre que sea posible y además provee *wrappers* que permitan usar tipos nativos de .NET pero no nativos de VisualFoxPro 9. Esto es muy útil por ejemplo con métodos que aceptan *byte, float, long, Decimal* entre otros.
+**kodnet** even allows access to enums, structs, classes and generic methods, which is something you can't achieve by generating a .COM component yourself. 
+**kodnet** implicitly provides type conversion whenever possible and also provides *wrappers* that allow you to use native .NET types but not native to VisualFoxPro 9. This is very useful for example with methods that accept *byte, float, long, Decimal* among others.
+
 
 
 # Want to be a Sponsor?
 
-Si necesita algún requerimiento específico o desea contribuir a que este proyecto siga mejorando puede contactarnos a contacto@kodhe.com o usar el link de donación. Si desea convertirse en un patrocinador y que su logo/empresa salga en este README.md conviértase en un patrocinador que dona mensualmente y contáctenos.
+If you need any specific requirement or want to contribute to this project continue improving you can contact us at contacto@kodhe.com or use the donation link. If you wish to become a sponsor and have your logo/company appear in this README.md, become a sponsor that donates monthly and contact us.
 
-* Donar a paypal [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XTUTKMVWCVQCJ&source=url)
+* Donate to paypal [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XTUTKMVWCVQCJ&source=url)
+
 
 
 
 ### NET Framework version support 
 
-**kodnet** funciona sobre .NET Framework 4 o superior y en cualquier versión de Windows que soporte este framework y VisualFoxPro 9
+**kodnet** runs on .NET Framework 4 or higher and any version of Windows that supports this framework and VisualFoxPro 9
 
 
 # Getting started 
 
-Primero cargue el entorno de kodnet
+Load the kodnet environment
 
 ```foxpro
 * Load kodnet library
 do fullpath("kodnet.prg")
 ```
 
-> Si usted obtiene un mensaje que dice **Unable to load CLR** problablemente se deba a que Windows bloquea los archivos descargados de internet. Para ello haga click derecho en las librerías .DLL distribuidas con *kodnet*  y haga click en desbloquear. 
+> If you get a message that says **Unable to load CLR** it's probably because Windows blocks files downloaded from the Internet. To do this right-click on the .DLL libraries distributed with *kodnet* and click unlock. 
 
 ```foxpro 
 * you can now access to kodnet using _screen.kodnet
@@ -64,36 +69,36 @@ int32Class= _screen.kodnet.getStaticWrapper("System.Int32")
 ## Getting started summary
 
 
-* Accede a cualquier componente .NET incluso si no está marcado para *interop* [ComVisible]
-* No necesita registrar o instalar el componente
-* Llame cualquier método, propiedad directamente como cualquier otro objeto *FoxPro*
-* Llamar al constructor de una clase con parámetros es posible
-* Llame a cualquier sobrecarga de un método. **kodnet** seleccionar la mejor, de acuerdo a sus parámetros
-* Soporte para cualquier tipo no nativo de .NET
-* Accede a miembros estáticos, incluidos Structs, Enums, Generic, etc
-* Accede a *.NET arrays* fácilmente usando los métodos *Get* y *Set*
-* Usted puede pasar un objeto *FoxPro* y leerlo desde un método .NET usando *dynamic*
-* Soporte multithread
-* Incluya controles visuales de .NET dentro de sus formularios *VisualFoxPro* y acceda a sus miembros como cualquier otra clase .NET
-* Soporte para añadir/eliminar manejadores de eventos .NET
-* Gran rendimiento en los llamados a métodos, propiedades, porque internamente no usa *Reflexión* sino usa *CallSite* (la metodología que usa internamente *dynamic* en C#) 
+* Access any .NET component even if it is not marked for *interop* [ComVisible].
+* You do not need to register or install the component
+* Call any method, property directly like any other object *FoxPro*
+* Calling the constructor of a class with parameters is possible
+* Call any method overload. **kodnet** select the best, according to your parameters
+* Support for any non-native .NET type
+* Access to static members, including Structs, Enums, Generics, etc.
+* Access *.NET arrays* easily using *Get* and *Set* methods
+* You can pass an object *FoxPro* and read it from a .NET method using *dynamic*.
+* Multithread support
+* Include visual .NET controls within your *VisualFoxPro* forms and access your members like any other .NET class.
+* Support for adding/deleting .NET event handlers
+* Great performance in method calls, properties, because internally it doesn't use *Reflection* but uses *CallSite* (the methodology it uses internally *dynamic* in C#) 
 
 
 
 
 # How it works
 
-Descargue el proyecto para que vea los ejemplos y aprenda como usarlo. Principalmente consta de esto
+Download the project to see the examples and learn how to use it. It mainly consists of the following
 
-* ClrHost.dll - Win32 dll para cargar el runtime .NET
-* Unas DLL usadas para interop - La carpeta lib
-* kodnet.prg - FoxPro prg, frontend al Proxy
-* dotnet4.vcx - FoxPro Clase visual, para añadir controles .NET  a formularios
+* ClrHost.dll - Win32 dll to load the .NET runtime
+* DLLs used for interop - The lib folder
+* kodnet.prg - FoxPro prg, frontend to Proxy
+* dotnet4.vcx - FoxPro Visual Class, for adding .NET controls to forms
 
-> En una aplicación distribuida, es recomendable que distribuya los componentes de kodnet dentro de una carpeta llamada *kodnet* en la misma ubicación de su ejecutable
+> In a distributed application, it is recommended that you distribute the kodnet components within a folder called *kodnet* in the same location as your executable.
 
 
-Mire un ejemplo de código que usa diferentes características de los componentes .NET
+Take a look at an example of code that uses different features of .NET components
 
 
 ```foxpro 
@@ -132,7 +137,7 @@ endfor
 ## Async and events 
 
 
-Considere ahora un ejemplo más avanzado que llama a métodos asíncronos  y usa eventos .NET
+Consider now a more advanced example that calls asynchronous methods and uses .NET events.
 
 ```foxpro
 
