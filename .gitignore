@@ -1,0 +1,4 @@
+*.BAK
+*.FXP
+samples/*.BAK
+samples/*.FXP
