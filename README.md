@@ -1,6 +1,8 @@
 # kodnet
 
 
+> This project only contains the VisualFoxPro related code. If you want the c# code for interop library go to [https://github.com/voxsoftware/jxshell.dotnet4](https://github.com/voxsoftware/jxshell.dotnet4)
+
 ### Go to [Spanish documentation](README.esLA.md)
 
 ## Library and helpers for access to all .NET objects/classes/controls from VisualFoxPro 9
