@@ -9,6 +9,14 @@ Yes made .NET interop easy for VisualFoxPro 9
 **kodnet** implícitamente provee conversión de tipos siempre que sea posible y además provee *wrappers* que permitan usar tipos nativos de .NET pero no nativos de VisualFoxPro 9. Esto es muy útil por ejemplo con métodos que aceptan *byte, float, long, Decimal* entre otros.
 
 
+# Want to be a Sponsor?
+
+Si necesita algún requerimiento específico o desea contribuir a que este proyecto siga mejorando puede contactarnos a contacto@kodhe.com o usar el link de donación. Si desea convertirse en un patrocinador y que su logo/empresa salga en este README.md conviértase en un patrocinador que dona mensualmente y contáctenos.
+
+* Donar a paypal [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XTUTKMVWCVQCJ&source=url)
+
+
+
 ### NET Framework version support 
 
 **kodnet** funciona sobre .NET Framework 4 o superior y en cualquier versión de Windows que soporte este framework y VisualFoxPro 9
@@ -121,8 +129,10 @@ FOR i=1 TO m.count
 endfor 
 ```
 
+## Async and events 
 
-Considere ahora un ejemplo más avanzado que llama a métodos asíncronos 
+
+Considere ahora un ejemplo más avanzado que llama a métodos asíncronos  y usa eventos .NET
 
 ```foxpro
 
@@ -177,6 +187,10 @@ ENDDEFINE
 
 
 ```
+
+
+
+
 
 
 
