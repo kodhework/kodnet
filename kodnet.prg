@@ -32,6 +32,8 @@ LOCAL manager
 manager = dotnet4.getClr()
 
 _screen.AddProperty("dotnet4Manager", m.dotnet4)
+_screen.AddProperty("__dotnet4", m.manager)
+_screen.AddProperty("__dotnetv", CREATEOBJECT("kodnet"))
 _screen.AddProperty("dotnet4", m.manager)
 _screen.AddProperty("kodnet", m.manager)
 _screen.AddProperty("kodnetManager", m.dotnet4)
@@ -48,6 +50,88 @@ DEFINE CLASS jxshell_dotnet4ui as session
 		ENDIF 
 		RETURN this._anchorStyles
 	ENDFUNC 
+ENDDEFINE 
+
+* THIS CLASSES (kodnet, kodnetWrapper) ARE FOR A EXPERIMENT TRYING TO INCREASE PERFORMANCE IN LOADING TIME
+* AND REALLY CAN INCREASE PERFORMANCE ON LOADING TIME, BUT DECREASES ON INVOKING METHODS
+DEFINE CLASS kodnetWrapper as session  
+	__helper= null 
+	___obj= null
+	FUNCTION init(helper, obj)
+		this.__helper= m.helper
+		this.___obj= obj
+		this.init_class()
+	ENDFUNC 
+	FUNCTION init_class()
+	ENDFUNC 
+
+ENDDEFINE 
+
+DEFINE CLASS kodnet as Custom 
+
+	helpers= null
+	tmpfolder= null 
+	FUNCTION init()
+		LOCAL folder 
+		this.helpers= CREATEOBJECT('collection')
+		folder= GETENV("APPDATA")
+		folder= ADDBS(m.folder) + "kodnet"
+		IF !DIRECTORY(m.folder)
+			MKDIR (m.folder )
+		ENDIF 
+		folder= ADDBS(m.folder) + "tmp"
+		IF !DIRECTORY(m.folder)
+			MKDIR (m.folder )
+		ENDIF 
+		this.tmpfolder= m.folder
+	ENDFUNC 
+	
+	FUNCTION compile(ast, typeD)
+		LOCAL file , val 
+		val= null 
+		file= ADDBS(this.tmpfolder) + SYS(2015) + ".prg"
+		TRY 
+			STRTOFILE(m.ast.code, m.file) 
+			SET procedure TO (m.file) ADDITIVE 
+			val= CREATEOBJECT(m.ast.staticName, m.typeD)
+		CATCH TO ex 
+			error  m.ex.message
+		FINALLY 
+			IF FILE(m.file)
+				DELETE FILE m.file
+			ENDIF 
+		ENDTRY 
+		RETURN m.val 
+	
+	ENDFUNC 
+	
+	FUNCTION create(helper)
+		RETURN CREATEOBJECT("kodnetWrapper", m.helper)
+	ENDFUNC 
+	
+	FUNCTION getStaticWrapper(type)
+		LOCAL typeD, helper
+		typeD= NULL 
+		helper= null 
+		TRY 
+			helper= this.helpers[m.type]
+		CATCH TO er 
+		ENDTRY
+		IF ISNULL(m.helper)
+			typeD= _screen.__dotnet4.loadTypeNoCompile(m.type)
+			helper= _screen.__dotnet4.vfpHelper(m.typeD)
+			
+			* compile class 
+			ast= m.helper.compile()
+			helper= this.compile(m.ast, m.helper)
+			* helper= this.create(m.helper)
+			this.helpers.Add(m.helper, m.type)
+		ENDIF 
+		
+		RETURN m.helper
+		
+	ENDFUNC 
+
 ENDDEFINE 
 
 DEFINE CLASS jxshell_event as Session
@@ -85,10 +169,36 @@ DEFINE CLASS jxshell_dotnet4 as Session
 	ENDFUNC 
 	
 	FUNCTION getClr()
-
 		RETURN this.manager
 	ENDFUNC 
 	
+	FUNCTION setClassLoadingMode(mode)
+		* 0 - compile with c#
+		* 1 - compile with VFP 
+		IF mode == 0
+			_screen.dotnet4= _screen.__dotnet4 
+			_screen.kodnet= _screen.__dotnet4 
+		ENDIF 
+		IF mode == 1
+			_screen.dotnet4= _screen.__dotnetv 
+			_screen.kodnet= _screen.__dotnetv
+		ENDIF 
+		
+	ENDFUNC 
+	FUNCTION getWrapped(obj)
+		LOCAL cls 
+		IF vartype(m.obj)=='O'
+			cls=_screen.__dotnetv.getStaticWrapper(m.obj.name)
+			obj= m.cls.___create(m.obj.value)
+		ENDIF 
+		RETURN obj 
+	ENDFUNC 
+	FUNCTION getUnWrapped(obj)
+		IF vartype(m.obj) == "O"
+			RETURN m.obj.__obj
+		ENDIF 
+		RETURN obj 
+	ENDFUNC 
 	FUNCTION initUi()
 		if(!this.initedUi)
 			_screen.dotnet4.loadAssemblyPartialName("System")
