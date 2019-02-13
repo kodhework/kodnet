@@ -44,26 +44,30 @@ do fullpath("kodnet.prg")
 * you can now access to kodnet using _screen.kodnet
 
 
-local WebClientClass
+local WebClientClass, WebClientObj
 * you get a reference to static class calling getStaticWrapper
-WebClientClass = _screen.kodnet.getStaticWrapper("System.Net.WebClient")
-m.WebClientClass.DownloadFile("https://codeload.github.com/voxsoftware/kodnet/zip/master", "kodnet.zip")
+m.WebClientClass = _screen.kodnet.getStaticWrapper("System.Net.WebClient")
+* create an instance of WebClient
+m.WebClientObj = m.WebClientClass.construct()
+* Download Google's home page
+m.WebClientObj.DownloadFile("https://www.google.com", "Sample.html")
+
 
 * load an assembly by file
 local customClass, customObject
 _screen.kodnet.loadAssemblyFile("customdotnet.dll")
-customClass= _screen.kodnet.getStaticWrapper("CustomClass")
-
+m.customClass= _screen.kodnet.getStaticWrapper("CustomClass")
 * create an instance of type 
-customObject= m.customClass.construct()
+m.customObject= m.customClass.construct()
+* call customObject's method
+? m.customObject.customMethod()
 
 
 * access to property, methods, fields directly
 local int32Class 
-int32Class= _screen.kodnet.getStaticWrapper("System.Int32")
-?int32Class.MaxValue
-?int32Class.MinValue 
-?customObject.customMethod()
+m.int32Class= _screen.kodnet.getStaticWrapper("System.Int32")
+? m.int32Class.MaxValue
+? m.int32Class.MinValue 
 
 
 ```
