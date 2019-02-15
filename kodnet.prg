@@ -139,8 +139,8 @@ DEFINE CLASS jxshell_event as Session
 	FUNCTION init(target,method)
 		IF !(m.target.baseclass == "Form")
 			this.target= m.target
+			ADDPROPERTY(this.target, "_event_" + m.method, this)
 		ENDIF 
-		ADDPROPERTY(this.target, "_event", this)
 		BINDEVENT(this, "invoke", m.target, m.method)
 	ENDFUNC 
 	FUNCTION invoke()
