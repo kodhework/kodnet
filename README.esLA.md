@@ -16,6 +16,21 @@ Si necesita algún requerimiento específico o desea contribuir a que este proye
 * Donar a paypal [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XTUTKMVWCVQCJ&source=url)
 
 
+# Por qué migrar desde wwDotnetBridge a kodnet
+
+**kodnet** ofrece ventajas que no ofrece wwDotnetBridge
+
+
+* Código más fácil de escribir!. Llamar/asigar métodos,propiedades,campos usando el nombre propio del miembro. 
+* Soporte para crear delegados y añadir/eliminar eventos
+* Cree instancias de clases genéricas fácilmente
+* Verdadero soporte para métodos asíncronos de .NET
+* Compilar código C# dinámicamente
+* Soporte para incluir controles visuales de .NET  a formularios VFP
+* Hasta 8 veces más rápido en llamados a métodos de instancia [Mire el ejemplo](https://drive.google.com/file/d/1FI2I6kuYAmzSrArNgXdtGXvgFVvmUoGN/view?usp=sharing)
+
+
+Si está pensando migrar, y necesita ayuda profesional, contáctenos a nuestro correo puesto más arriba. Estaremos gustosos de crear una cotización adsequible que se ajuste a sus necesidades.
 
 
 ### Version NET Framework soportada  
@@ -190,12 +205,128 @@ ENDDEFINE
 ```
 
 
+## Compilar código C#
+
+**kodnet** permite compilar código C#. Puede guiarse con nuestro ejemplo
+
+```Foxpro
+TEXT TO m.code noshow
+
+using System;
+public class program{
+	public static void main(){
+	}
+}
+namespace Compiled
+{
+
+	public class Person{
+		public string name;
+		public int age;
+	}
+	
+	public class Test
+	{	
+		public Person person(string name, int age){
+			var p= new Person();
+			p.name= name;
+			p.age= age;
+			return p;
+		}
+	
+		public static int ExecuteFunc(Func<string,int> func)
+		{
+			return func("Method executed from .NET");
+		}
+		
+		public static int ExecuteFunc(Func<string,int> func, string message)
+		{
+			return func(message);
+		}
+		
+		public static int ExecuteFunc(Func<string,int,string,int> func, string message, int option, string title)
+		{
+			return func(message,option,title);
+		}
+	}
+}
+
+
+ENDTEXT 
+
+LOCAL engine
+
+* COMPILE C# CODE
+Local asem, test, person
+
+engine= _screen.kodnet.getStaticWrapper("jxshell.csharplanguage").construct()
+m.engine.Runscript(m.code)
+asem = m.engine.getCompiledAssembly()
+_Screen.kodnet.loadAssembly(m.asem)
+
+
+* now you can use the type compiled 
+test= _screen.kodnet.getStaticWrapper("Compiled.Test").construct()
+person= test.person("James", 24)
+?person.name
+?person.age
+```
+
+
+## Delegados, Tipos genéricos 
+
+
+**kodnet** tiene soporte para crear delegados y objetos de tipos genéricos. En el siguiente ejemplo verá como se usa la clase  compilada en el ejemplo anterior, para mostrar el uso de delegados y tipos genéricos en este caso: System.Func<string,int>
+
+
+```Foxpro
+* YES! KODNET SUPPORTS DELEGATES 
+LOCAL Func1, Func2, target , TestClass, needrunCompile
+
+
+TRY 
+	* Take a look in compilecsharp.prg example for understand
+	TestClass= _screen.kodnet.getStaticWrapper("Compiled.Test")
+CATCH TO ex 
+	needrunCompile= .t.
+ENDTRY 
+
+IF needrunCompile 
+	RETURN MESSAGEBOX("Please execute first 'compilecsharp.prg' example",64,"Kodnet")
+ENDIF 
 
 
 
+target= CREATEOBJECT("func_callback")
+Func1= _screen.kodnet.getStaticWrapper("System.Func<System.String,System.Int32>").construct(m.target,"callback")
+Func2= _screen.kodnet.getStaticWrapper("System.Func<System.String,System.Int32,System.String,System.Int32>").construct(m.target,"callback")
+
+* Pass Func1 delegate to c# function 
+?TestClass.executeFunc(Func1)
+
+* pass overloaded 
+?TestClass.executeFunc(Func1, "Parameter sent to c#")
 
 
+* pass overloaded System.Func<string,int,string,int>
+?TestClass.executeFunc(Func2, "Parameter sent to c#", 64, "Title")
 
 
+* It's a good practice Free delegate, avoid memory leaks
+Func1.dispose()
+Func2.dispose()
 
+DEFINE CLASS func_callback as Custom 
+
+	FUNCTION callback( str, option, title )
+		IF PCOUNT() == 3
+			RETURN MESSAGEBOX(str,option,title)
+		ELSE 
+			RETURN MESSAGEBOX(str)
+		ENDIF 
+
+	ENDFUNC 
+
+ENDDEFINE 
+```
 

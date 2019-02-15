@@ -14,6 +14,23 @@ Yes made .NET interop easy for VisualFoxPro 9
 **kodnet** implicitly provides type conversion whenever possible and also provides *wrappers* that allow you to use native .NET types but not native to VisualFoxPro 9. This is very useful for example with methods that accept *byte, float, long, Decimal* among others.
 
 
+# Why migrate from wwDotnetBridge to kodnet
+
+**kodnet** offers advantages not offered by wwDotnetBridge
+
+
+* Easier code to write! Call/assign methods, properties, fields using the member's own name. 
+* Support to create delegates and add/delete events
+* Create generic class instances easily
+* Real support for asynchronous .NET methods
+* Compile C# code dynamically
+* Support for including visual controls from .NET to VFP forms
+* Up to 8 times faster in instance method calls [See example](https://drive.google.com/file/d/1FI2I6kuYAmzSrArNgXdtGXvgFVvmUoGN/view?usp=sharing)
+
+
+If you are thinking migrating, and need professional help, contact us at our email address above. We will be happy to create an affordable quote to fit your needs.
+
+
 
 # Want to be a Sponsor?
 
@@ -200,12 +217,127 @@ ENDDEFINE
 ```
 
 
+## Compilar código C#
+
+**kodnet** permite compilar código C#. Puede guiarse con nuestro ejemplo
+
+```Foxpro
+TEXT TO m.code noshow
+
+using System;
+public class program{
+	public static void main(){
+	}
+}
+namespace Compiled
+{
+
+	public class Person{
+		public string name;
+		public int age;
+	}
+	
+	public class Test
+	{	
+		public Person person(string name, int age){
+			var p= new Person();
+			p.name= name;
+			p.age= age;
+			return p;
+		}
+	
+		public static int ExecuteFunc(Func<string,int> func)
+		{
+			return func("Method executed from .NET");
+		}
+		
+		public static int ExecuteFunc(Func<string,int> func, string message)
+		{
+			return func(message);
+		}
+		
+		public static int ExecuteFunc(Func<string,int,string,int> func, string message, int option, string title)
+		{
+			return func(message,option,title);
+		}
+	}
+}
+
+
+ENDTEXT 
+
+LOCAL engine
+
+* COMPILE C# CODE
+Local asem, test, person
+
+engine= _screen.kodnet.getStaticWrapper("jxshell.csharplanguage").construct()
+m.engine.Runscript(m.code)
+asem = m.engine.getCompiledAssembly()
+_Screen.kodnet.loadAssembly(m.asem)
+
+
+* now you can use the type compiled 
+test= _screen.kodnet.getStaticWrapper("Compiled.Test").construct()
+person= test.person("James", 24)
+?person.name
+?person.age
+```
+
+
+## Delegados, Tipos genéricos 
+
+
+**kodnet** tiene soporte para crear delegados y objetos de tipos genéricos. En el siguiente ejemplo verá como se usa la clase  compilada en el ejemplo anterior, para mostrar el uso de delegados y tipos genéricos en este caso: System.Func<string,int>
+
+
+```Foxpro
+* YES! KODNET SUPPORTS DELEGATES 
+LOCAL Func1, Func2, target , TestClass, needrunCompile
+
+
+TRY 
+	* Take a look in compilecsharp.prg example for understand
+	TestClass= _screen.kodnet.getStaticWrapper("Compiled.Test")
+CATCH TO ex 
+	needrunCompile= .t.
+ENDTRY 
+
+IF needrunCompile 
+	RETURN MESSAGEBOX("Please execute first 'compilecsharp.prg' example",64,"Kodnet")
+ENDIF 
 
 
 
+target= CREATEOBJECT("func_callback")
+Func1= _screen.kodnet.getStaticWrapper("System.Func<System.String,System.Int32>").construct(m.target,"callback")
+Func2= _screen.kodnet.getStaticWrapper("System.Func<System.String,System.Int32,System.String,System.Int32>").construct(m.target,"callback")
+
+* Pass Func1 delegate to c# function 
+?TestClass.executeFunc(Func1)
+
+* pass overloaded 
+?TestClass.executeFunc(Func1, "Parameter sent to c#")
 
 
+* pass overloaded System.Func<string,int,string,int>
+?TestClass.executeFunc(Func2, "Parameter sent to c#", 64, "Title")
 
 
+* It's a good practice Free delegate, avoid memory leaks
+Func1.dispose()
+Func2.dispose()
 
+DEFINE CLASS func_callback as Custom 
 
+	FUNCTION callback( str, option, title )
+		IF PCOUNT() == 3
+			RETURN MESSAGEBOX(str,option,title)
+		ELSE 
+			RETURN MESSAGEBOX(str)
+		ENDIF 
+
+	ENDFUNC 
+
+ENDDEFINE 
+```
