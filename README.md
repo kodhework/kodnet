@@ -217,9 +217,9 @@ ENDDEFINE
 ```
 
 
-## Compilar código C#
+## Compile C# code
 
-**kodnet** permite compilar código C#. Puede guiarse con nuestro ejemplo
+**kodnet** allow C# code dompilation. Take a look in this example
 
 ```Foxpro
 TEXT TO m.code noshow
@@ -285,10 +285,9 @@ person= test.person("James", 24)
 ```
 
 
-## Delegados, Tipos genéricos 
+## Delegates, generic types 
 
-
-**kodnet** tiene soporte para crear delegados y objetos de tipos genéricos. En el siguiente ejemplo verá como se usa la clase  compilada en el ejemplo anterior, para mostrar el uso de delegados y tipos genéricos en este caso: System.Func<string,int>
+**kodnet** supports the creation of delegates and generic objects. In the following example you will see how the class compiled in the previous example is used, to show the use of delegates and generic types: System.Func<string,int>.
 
 
 ```Foxpro
