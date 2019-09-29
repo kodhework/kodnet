@@ -20,7 +20,7 @@ Yes made .NET interop easy for VisualFoxPro 9
 
 
 * Easier code to write! Call/assign methods, properties, fields using the member's own name. 
-* Support to create delegates and add/delete events
+* Support to create delegates and add/delete events. YES! **kodnet** supports **DELEGATES** without registering VFP components
 * Create generic class instances easily
 * Real support for asynchronous .NET methods
 * Compile C# code dynamically
